@@ -1,0 +1,129 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Allocamelus API Specification",
+    "version": "0.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://allocamelus.local/api/v1",
+      "description": "Development server"
+    },
+    {
+      "url": "https://www.allocamelus.com/api/v1",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/account": {
+      "post": {
+        "summary": "Creates a new account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userName": {
+                    "description": "Username",
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]*$",
+                    "minLength": 5,
+                    "maxLength": 64
+                  },
+                  "email": {
+                    "description": "Email",
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "description": "Password object",
+                    "type": "object",
+                    "properties": {
+                      "salt": {
+                        "description": "Encoded argon2id object without key",
+                        "type": "string",
+                        "pattern": "^\\$argon2id\\$v=19\\$m=[0-9]+,t=[0-9]+,p=[0-9]+\\$[A-Za-z\\d+/]+$"
+                      },
+                      "hash": {
+                        "description": "Hashed key",
+                        "type": "string",
+                        "format": "password"
+                      }
+                    },
+                    "required": [
+                      "salt",
+                      "hash"
+                    ]
+                  },
+                  "key": {
+                    "description": "PGP & Recovery Key object",
+                    "type": "object",
+                    "properties": {
+                      "publicArmored": {
+                        "description": "PGP Public key (armored)",
+                        "type": "string"
+                      },
+                      "privateArmored": {
+                        "description": "PGP Private key (armored) encrypted with passphrase",
+                        "type": "string"
+                      },
+                      "recoveryHash": {
+                        "description": "Hash of recovery key",
+                        "type": "string"
+                      },
+                      "passphrase": {
+                        "description": "Passphrase encrypted with recovery key",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "publicArmored",
+                      "privateArmored",
+                      "recoveryHash",
+                      "passphrase"
+                    ]
+                  },
+                  "captcha": {
+                    "description": "Captcha token",
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "userName",
+                  "email",
+                  "password",
+                  "key",
+                  "captcha"
+                ],
+                "example": {
+                  "userName": "mary-smith",
+                  "email": "mary@example.com",
+                  "password": {
+                    "salt": "$argon2id$v=19$m=131072,t=3,p=1$MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI",
+                    "hash": "Xd8yTpCV9A3cRKI/5SHcTYx2Q8XeQ0ut82mTQZSymgsMdII8kJBfTVNPSwsR2aw7RR2535GFTl3DBaZ/BAPjRQ"
+                  },
+                  "captcha": "10000000-aaaa-bbbb-cccc-000000000001"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "pong"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
