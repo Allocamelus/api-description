@@ -72,8 +72,8 @@
                         "description": "Hash of recovery key",
                         "type": "string"
                       },
-                      "passphrase": {
-                        "description": "Passphrase encrypted with recovery key",
+                      "recoveryArmored": {
+                        "description": "PGP private key encrypted with recovery key",
                         "type": "string"
                       }
                     },
